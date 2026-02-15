@@ -1,3 +1,4 @@
+from models.llm_loader import get_llm_model
 
 def generate_answer(prompt,max_new_tokens=300):
   model, tokenizer = get_llm_model()
