@@ -1,4 +1,5 @@
 
+import faiss
 from models.embedder import embed_text
 
 #will have to import embed function in this when modularize
