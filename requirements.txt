@@ -1,0 +1,2 @@
+
+sentence-transformers fastapi streamlit requests pypdf faiss-cpu transformers accelerate bitsandbytes fastapi uvicorn torch 
