@@ -1,0 +1,8 @@
+
+__pycache__/
+*.pyc
+*.faiss
+*.index
+data/
+logs/
+.env
