@@ -1,3 +1,4 @@
+import torch
 from models.llm_loader import get_llm_model
 
 def generate_answer(prompt,max_new_tokens=300):
@@ -23,7 +24,7 @@ def generate_answer(prompt,max_new_tokens=300):
 
   with torch.no_grad():
         outputs = model.generate(
-            input_ids=input_ids, # Changed from input_id to input_ids
+            input_ids=input_ids,
             attention_mask=attention_mask,
             max_new_tokens=max_new_tokens,
             temperature=0.1,
