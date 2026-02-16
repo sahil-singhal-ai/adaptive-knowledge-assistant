@@ -22,11 +22,7 @@ class QueryRequest(BaseModel):
     file_url: str
     question: str
 
-@app.on_event("startup")
-def load_model():
-    get_llm_model()
 
-    
 @app.get("/", response_class=HTMLResponse)
 def home():
     return """
