@@ -3,13 +3,12 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 import gradio as gr
-import uvicorn
 
 from pipeline import run_knowledge_assistant
 
 
 # ----------------------------
-# FastAPI Backend
+# FastAPI App
 # ----------------------------
 
 app = FastAPI(title="Adaptive Knowledge Assistant")
@@ -75,9 +74,5 @@ with gr.Blocks(title="Adaptive Knowledge Assistant") as demo:
     )
 
 
-# Mount Gradio into FastAPI
+# Mount Gradio inside FastAPI at root path
 app = gr.mount_gradio_app(app, demo, path="/")
-
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0",
