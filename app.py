@@ -20,9 +20,13 @@ class QueryRequest(BaseModel):
     file_url: str
     question: str
 
-@app.get("/")
-def health():
-    return {"status": "running"}
+@app.get("/", response_class=HTMLResponse)
+def home():
+    return """
+    <h1>Adaptive Knowledge Assistant</h1>
+    <p>System is running.</p>
+    <a href="/docs">Go to API Docs</a>
+    """
 
 @app.post("/ask")
 def ask(request: QueryRequest):
