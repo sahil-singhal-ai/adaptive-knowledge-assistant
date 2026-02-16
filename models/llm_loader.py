@@ -2,7 +2,7 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig # Re-import BitsAndBytesConfig
 
-MODEL_NAME = "microsoft/Phi-3-mini-4k-instruct"
+MODEL_NAME = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
 
 _tokenizer = None
 _model = None
@@ -11,7 +11,7 @@ def get_llm_model():
     global _model, _tokenizer
 
     if _model is None or _tokenizer is None:
-        print("Loading Mistral model...")
+        print("Loading model...")
 
         _tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
