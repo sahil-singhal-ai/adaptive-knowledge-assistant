@@ -9,3 +9,5 @@ accelerate
 bitsandbytes
 uvicorn
 torch
+gradio
+pydantic

@@ -11,30 +11,40 @@ pinned: false
 
 # Adaptive Knowledge Assistant
 
-A FastAPI-based Retrieval-Augmented Generation (RAG) system with:
+A Retrieval-Augmented Generation (RAG) system combining:
 
-- Document ingestion
-- Chunking
-- Embeddings
-- Vector retrieval
-- LLM-based answer generation
-- Evaluation layer
+- FastAPI backend (REST API)
+- Gradio UI (interactive interface)
+- Docker deployment on Hugging Face Spaces
+
+---
 
 ## 🏗 Architecture
 
-FastAPI → Pipeline → Embeddings → Vector Store → LLM → Evaluation
+Browser  
+→ Gradio UI  
+→ FastAPI Endpoints  
+→ Pipeline  
+→ Embeddings + Vector Store  
+→ LLM  
+→ Evaluation Layer  
+
+---
+
+## 📌 API Endpoints
+
+- `GET /health` → Health check  
+- `POST /ask` → Query the knowledge assistant  
+
+---
 
 ## 🚀 Deployment
 
-This Space uses a custom Dockerfile and runs on port 7860 using Uvicorn.
+This Space runs using a custom Docker container and exposes port 7860 via Uvicorn.
 
-## 🔒 Security Notes
+---
 
-- API keys are stored using Hugging Face Secrets
-- No credentials are hardcoded
-- CORS will be restricted in production
+## 🔐 Security
 
-## 📌 Endpoints
-
-- `GET /` → Health check
-- `POST /ask` → Ask questions over uploaded document URL
+- API keys stored using Hugging Face Secrets
+- No credentials hardcoded

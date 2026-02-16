@@ -1,30 +1,49 @@
 
 
-import gradio as gr
-from pipeline import run_knowledge_assistant
 from fastapi import FastAPI
 from pydantic import BaseModel
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
-from models.llm_loader import get_llm_model
-
 import gradio as gr
+import uvicorn
+
 from pipeline import run_knowledge_assistant
 
+# ----------------------------
+# FastAPI App
+# ----------------------------
 
-def handle_query(query, file):
+app = FastAPI(title="Adaptive Knowledge Assistant")
+
+
+class AskRequest(BaseModel):
+    query: str
+    file_path: str | None = None
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
+
+@app.post("/ask")
+def ask_question(request: AskRequest):
+    result = run_knowledge_assistant(request.query, request.file_path)
+    return result
+
+
+# ----------------------------
+# Gradio UI
+# ----------------------------
+
+def gradio_handler(query, file):
     try:
-        # file will be a file path (string) if uploaded
         file_path = file if file else None
 
         result = run_knowledge_assistant(query, file_path)
 
         answer = result.get("answer", "")
         chunks = "\n\n".join(result.get("retrieved_chunks", []))
-
-        evaluation_dict = result.get("evaluation", {})
         evaluation = "\n".join(
-            [f"{k}: {v}" for k, v in evaluation_dict.items()]
+            [f"{k}: {v}" for k, v in result.get("evaluation", {}).items()]
         )
 
         return answer, chunks, evaluation
@@ -33,23 +52,28 @@ def handle_query(query, file):
         return f"Error: {str(e)}", "", ""
 
 
-with gr.Blocks() as demo:
-
-    gr.Markdown("# Simple Knowledge Assistant (Test Deployment)")
+with gr.Blocks(title="Adaptive Knowledge Assistant") as demo:
+    gr.Markdown("# 🤖 Adaptive Knowledge Assistant")
 
     file_input = gr.File(label="Upload Document", type="filepath")
     query_input = gr.Textbox(label="Ask a Question")
-
-    submit_btn = gr.Button("Run")
+    submit = gr.Button("Run")
 
     answer_output = gr.Textbox(label="Answer")
     chunks_output = gr.Textbox(label="Retrieved Chunks")
-    eval_output = gr.Textbox(label="Evaluation Metrics")
+    eval_output = gr.Textbox(label="Evaluation")
 
-    submit_btn.click(
-        handle_query,
+    submit.click(
+        gradio_handler,
         inputs=[query_input, file_input],
         outputs=[answer_output, chunks_output, eval_output],
     )
 
-demo.launch()
+
+# Mount Gradio inside FastAPI
+app = gr.mount_gradio_app(app, demo, path="/")
+
+
+# Run via uvicorn if local
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=7860)
