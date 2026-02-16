@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
-
+from models.llm_loader import get_llm_model
 
 from pipeline import run_knowledge_assistant
 
@@ -22,6 +22,11 @@ class QueryRequest(BaseModel):
     file_url: str
     question: str
 
+@app.on_event("startup")
+def load_model():
+    get_llm_model()
+
+    
 @app.get("/", response_class=HTMLResponse)
 def home():
     return """
@@ -32,6 +37,7 @@ def home():
 
 @app.post("/ask")
 def ask(request: QueryRequest):
+    
     result = run_knowledge_assistant(
         file_url=request.file_url,
         question=request.question
