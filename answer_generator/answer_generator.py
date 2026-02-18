@@ -27,8 +27,9 @@ def generate_answer(prompt,max_new_tokens=300):
             input_ids=input_ids,
             attention_mask=attention_mask,
             max_new_tokens=max_new_tokens,
-            temperature=0.1,
-            do_sample=False,
+            temperature=0.2,
+            do_sample=True,
+            repetition_penalty=1.1,
             pad_token_id=tokenizer.eos_token_id
         )
   response = tokenizer.decode(outputs[0], skip_special_tokens=True)
