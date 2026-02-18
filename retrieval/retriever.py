@@ -6,7 +6,7 @@ from models.embedder import embed_text
 
 from pathlib import Path
 
-def retrieve(question1:str,original_file_path,top_k:int =5):
+def retrieve(question1:str,original_file_path,top_k:int):
 
   embedded_question_vector=embed_text(question1).astype("float32").reshape(1,-1)
 
