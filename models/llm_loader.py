@@ -2,7 +2,7 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig # Re-import BitsAndBytesConfig
 
-MODEL_NAME = "distilgpt2"
+MODEL_NAME = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
 
 _tokenizer = None
 _model = None
