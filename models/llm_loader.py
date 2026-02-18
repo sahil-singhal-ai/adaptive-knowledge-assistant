@@ -2,7 +2,7 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig # Re-import BitsAndBytesConfig
 
-MODEL_NAME = "google/flan-t5-base"
+MODEL_NAME = "distilgpt2"
 
 _tokenizer = None
 _model = None
