@@ -9,21 +9,13 @@ def generate_answer(prompt,retrieved_chunks,question,max_new_tokens=300):
 
   # Get model max context length
   max_context = model.config.max_position_embeddings
-
-  # Tokenize each component separately
-  prompt_tokens = tokenizer(prompt, return_tensors="pt", add_special_tokens=False)
-  question_tokens = tokenizer(question, return_tensors="pt", add_special_tokens=False)
-  context_tokens = tokenizer(retrieved_chunks, return_tensors="pt", add_special_tokens=False)
-
-  prompt_ids = prompt_tokens["input_ids"].to(device)
-  question_ids = question_tokens["input_ids"].to(device)
-  context_ids = context_tokens["input_ids"].to(device)
-  
-  #Calculate available token budget
   max_input_tokens = max_context - max_new_tokens
-  prompt_len = prompt_ids.shape[1]
-  question_len = question_ids.shape[1]
-  
+
+  # Tokenize prompt + question to measure their length
+  prompt_len = len(tokenizer(prompt)["input_ids"])
+  question_len = len(tokenizer(question)["input_ids"])
+
+  #Calculate available token budget
   available_for_context = max_input_tokens - prompt_len - question_len
 
   if available_for_context <= 0:
@@ -31,15 +23,22 @@ def generate_answer(prompt,retrieved_chunks,question,max_new_tokens=300):
 
   #Trim chunks first and then truncate ONLY context if needed
 
-  if context_ids.shape[1] > available_for_context:
-    #Keep most recent context tokens (important for RAG)
-    context_ids = context_ids[:, -available_for_context:]
+  
+  #Trim at TEXT level BEFORE tokenization
+  trimmed_chunks = trim_chunks_to_fit(retrieved_chunks, tokenizer, available_for_context)
+  
 
-  #Concatenate properly
+  # Join context
+  context_text = "\n\n".join(trimmed_chunks)
 
-  input_ids = torch.cat([prompt_ids, context_ids, question_ids], dim=1)
+  # Build final input text
+  final_input_text = prompt + context_text + question
 
-  attention_mask = torch.ones_like(input_ids).to(device)
+  # Tokenize once
+  inputs = tokenizer(final_input_text, return_tensors="pt").to(device)
+  
+  input_ids = inputs["input_ids"]
+  attention_mask = inputs["attention_mask"]
 
   with torch.no_grad():
         outputs = model.generate(
