@@ -26,11 +26,11 @@ def run_knowledge_assistant(file_url: str, question: str):
     embedded_text_vector = embed_text(text_chunks)
     store_embeddings(embedded_text_vector, local_file_path)
 
-    distance, indices = retrieve(question, local_file_path, 4)
+    distance, indices = retrieve(question, local_file_path, 5)
     retrieved_chunks = [text_chunks[i] for i in indices[0]]
 
     prompt = build_prompt(retrieved_chunks, question)
-    answer = generate_answer(prompt, 300)
+    answer = generate_answer(prompt,retrieved_chunks, indices, question, 300)
 
     evaluation_prompt = evaluation_prompt_builder(question, retrieved_chunks, answer)
     evaluation_response = generate_answer(evaluation_prompt, 1000)

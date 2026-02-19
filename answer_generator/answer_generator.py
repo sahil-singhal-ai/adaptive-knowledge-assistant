@@ -1,7 +1,8 @@
 import torch
 from models.llm_loader import get_llm_model
+from retrieval.trim_chunks import trim_chunks_to_fit
 
-def generate_answer(prompt,max_new_tokens=300):
+def generate_answer(prompt,retrieved_chunks,question,max_new_tokens=300):
   model, tokenizer = get_llm_model()
 
   device = next(model.parameters()).device
@@ -9,18 +10,36 @@ def generate_answer(prompt,max_new_tokens=300):
   # Get model max context length
   max_context = model.config.max_position_embeddings
 
-  # Tokenize without truncation first
-  inputs= tokenizer(prompt, return_tensors="pt").to(device)
-  input_ids = inputs["input_ids"]
+  # Tokenize each component separately
+  prompt_tokens = tokenizer(prompt, return_tensors="pt", add_special_tokens=False)
+  question_tokens = tokenizer(question, return_tensors="pt", add_special_tokens=False)
+  context_tokens = tokenizer(retrieved_chunks, return_tensors="pt", add_special_tokens=False)
 
-  # Calculate safe input length
+  prompt_ids = prompt_tokens["input_ids"].to(device)
+  question_ids = question_tokens["input_ids"].to(device)
+  context_ids = context_tokens["input_ids"].to(device)
+  
+  #Calculate available token budget
   max_input_tokens = max_context - max_new_tokens
+  prompt_len = prompt_ids.shape[1]
+  question_len = question_ids.shape[1]
+  
+  available_for_context = max_input_tokens - prompt_len - question_len
 
-  if input_ids.shape[1] > max_input_tokens:
-    input_ids = input_ids[:, -max_input_tokens:]  # Keep last tokens only
+  if available_for_context <= 0:
+    raise ValueError("System + Question exceed model context window")
 
-  input_ids = input_ids.to(device)
-  attention_mask = inputs["attention_mask"].to(device)
+  #Trim chunks first and then truncate ONLY context if needed
+
+  if context_ids.shape[1] > available_for_context:
+    #Keep most recent context tokens (important for RAG)
+    context_ids = context_ids[:, -available_for_context:]
+
+  #Concatenate properly
+
+  input_ids = torch.cat([prompt_ids, context_ids, question_ids], dim=1)
+
+  attention_mask = torch.ones_like(input_ids).to(device)
 
   with torch.no_grad():
         outputs = model.generate(
