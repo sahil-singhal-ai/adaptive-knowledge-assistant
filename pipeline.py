@@ -6,10 +6,9 @@ from ingestion.cleaner import clean_document_text
 from models.embedder import embed_text
 from retrieval.vectorstore import store_embeddings
 from retrieval.retriever import retrieve
-from prompt.build_prompt import build_prompt
-from prompt.evaluation_prompt import evaluation_prompt_builder
 from models.llm_loader import get_llm_model
 from answer_generator.answer_generator import generate_answer
+from answer_generator.evaluation_answer import evaluation_answer
 
 
 
@@ -31,12 +30,12 @@ def run_knowledge_assistant(file_url: str, question: str):
 
     model, tokenizer = get_llm_model()
 
-    answer = generate_answer(model,tokenizer,retrieved_chunks, indices, question, 300)
+    answer,trimmed_chunks = generate_answer(model,tokenizer,retrieved_chunks, indices, question, 300)
 
-    #evaluation_response = generate_answer(model,tokenizer, evaluation_prompt, 1000)
+    evaluation_response = evaluation_answer(model,tokenizer,question,answer,trimmed_chunks,500)
 
     return {
         "answer": answer,
-        #"evaluation": evaluation_response,
+        "evaluation": evaluation_response,
         "retrieved_chunks": retrieved_chunks
     }

@@ -1,5 +1,5 @@
 import torch
-from models.llm_loader import get_llm_model
+
 from retrieval.trim_chunks import trim_chunks_to_fit
 from prompt.build_prompt import build_prompt
 
@@ -56,4 +56,4 @@ def generate_answer(model,tokenizer,retrieved_chunks,indices,question,max_new_to
   generated_tokens = outputs[0][input_ids.shape[1]:]
   answer = tokenizer.decode(generated_tokens, skip_special_tokens=True)
 
-  return answer.strip()
+  return answer.strip(),trimmed_chunks
