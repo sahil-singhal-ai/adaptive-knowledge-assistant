@@ -25,7 +25,7 @@ def run_knowledge_assistant(file_url: str, question: str):
     embedded_text_vector = embed_text(text_chunks)
     store_embeddings(embedded_text_vector, local_file_path)
 
-    distance, indices = retrieve(question, local_file_path, 5)
+    distance, indices = retrieve(question, local_file_path, 10)
     retrieved_chunks = [text_chunks[i] for i in indices[0]]
 
     model, tokenizer = get_llm_model()
