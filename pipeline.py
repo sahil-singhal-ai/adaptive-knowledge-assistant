@@ -35,17 +35,17 @@ def run_knowledge_assistant(file_url: str, question: str):
 
     model, tokenizer = get_llm_model()
 
-    answer,trimmed_chunks = generate_answer(model,tokenizer,retrieved_chunks, indices, question, chat_memory.get_messages,300)
+    answer,trimmed_chunks = generate_answer(model,tokenizer,retrieved_chunks, indices, question, chat_memory.get_messages(),300)
 
     # Add assistant response to memory
     chat_memory.add_assistant(answer)
 
     #evaluation_response = evaluation_answer(model,tokenizer,question,answer,trimmed_chunks,chat_memory.get_messages,500)
-    evaluation_response = evaluation_answer(model,tokenizer,trimmed_chunks,chat_memory.get_messages,500)
+    evaluation_response = evaluation_answer(model,tokenizer,trimmed_chunks,chat_memory.get_messages(),500)
 
     return {
         "answer": answer,
         "evaluation": evaluation_response,
-        "retrieved_chunks": retrieved_chunks
+        "retrieved_chunks": retrieved_chunks,
         "conversation": chat_memory.get_messages()
     }

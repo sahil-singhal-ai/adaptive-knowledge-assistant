@@ -6,9 +6,6 @@ Conversation:
 {conversation_text}
 
 
-Retrieved Context:
-{context}
-
 Document Context:
 {document_context}
 
