@@ -29,14 +29,14 @@ def run_knowledge_assistant(file_url: str, question: str):
     distance, indices = retrieve(question, local_file_path, 5)
     retrieved_chunks = [text_chunks[i] for i in indices[0]]
 
-    prompt = build_prompt(retrieved_chunks, question)
-    answer = generate_answer(prompt,retrieved_chunks, indices, question, 300)
+    model, tokenizer = get_llm_model()
 
-    evaluation_prompt = evaluation_prompt_builder(question, retrieved_chunks, answer)
-    evaluation_response = generate_answer(evaluation_prompt, 1000)
+    answer = generate_answer(model,tokenizer,retrieved_chunks, indices, question, 300)
+
+    #evaluation_response = generate_answer(model,tokenizer, evaluation_prompt, 1000)
 
     return {
         "answer": answer,
-        "evaluation": evaluation_response,
+        #"evaluation": evaluation_response,
         "retrieved_chunks": retrieved_chunks
     }

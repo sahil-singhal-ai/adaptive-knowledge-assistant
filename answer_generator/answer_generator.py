@@ -1,9 +1,9 @@
 import torch
 from models.llm_loader import get_llm_model
 from retrieval.trim_chunks import trim_chunks_to_fit
+from prompt.build_prompt import build_prompt
 
-def generate_answer(prompt,retrieved_chunks,question,max_new_tokens=300):
-  model, tokenizer = get_llm_model()
+def generate_answer(model,tokenizer,retrieved_chunks,indices,question,max_new_tokens):
 
   device = next(model.parameters()).device
 
@@ -12,30 +12,30 @@ def generate_answer(prompt,retrieved_chunks,question,max_new_tokens=300):
   max_input_tokens = max_context - max_new_tokens
 
   # Tokenize prompt + question to measure their length
-  prompt_len = len(tokenizer(prompt)["input_ids"])
-  question_len = len(tokenizer(question)["input_ids"])
+  base_prompt=build_prompt([], question)
+  base_tokens = len(tokenizer(base_prompt)["input_ids"])
 
   #Calculate available token budget
-  available_for_context = max_input_tokens - prompt_len - question_len
+  available_for_context = max_input_tokens - base_tokens
 
   if available_for_context <= 0:
     raise ValueError("System + Question exceed model context window")
 
   #Trim chunks first and then truncate ONLY context if needed
 
-  
   #Trim at TEXT level BEFORE tokenization
   trimmed_chunks = trim_chunks_to_fit(retrieved_chunks, tokenizer, available_for_context)
-  
 
-  # Join context
-  context_text = "\n\n".join(trimmed_chunks)
+  #call prompt function to build prompt basis question and context text
+  prompt=build_prompt(trimmed_chunks,question)
 
-  # Build final input text
-  final_input_text = prompt + context_text + question
+  #final token length check 
+  final_token_len = len(tokenizer(prompt)["input_ids"])
+  if final_token_len > max_input_tokens:
+    print ("\nThere was token budgeting error\n")
 
   # Tokenize once
-  inputs = tokenizer(final_input_text, return_tensors="pt").to(device)
+  inputs = tokenizer(prompt, return_tensors="pt").to(device)
   
   input_ids = inputs["input_ids"]
   attention_mask = inputs["attention_mask"]

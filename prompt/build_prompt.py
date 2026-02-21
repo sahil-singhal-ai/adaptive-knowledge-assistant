@@ -1,6 +1,6 @@
 
 def build_prompt(context_chunks:list,question):
-  retrieved_context = "\n\n".join(context_chunks)
+  context_text = "\n\n".join(context_chunks)
 
   final_prompt = f"""
   You are a helpful assistant.
@@ -12,7 +12,7 @@ Based ONLY on the provided context, answer the question clearly.
 If the context does not contain enough information, say so.
   
 
-Context : {retrieved_context}
+Context : {context_text}
 
 Question : {question}
 
