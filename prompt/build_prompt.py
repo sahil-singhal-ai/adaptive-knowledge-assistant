@@ -1,8 +1,13 @@
 
-def build_prompt(context_chunks:list,conversation_text):
+def build_prompt(context_chunks:list,conversation_text,question,system_instruction):
   context_text = "\n\n".join(context_chunks)
 
   final_prompt = f"""
+
+{system_instruction}
+
+User question : {question}
+
 Document Context:
 {context_text}
 

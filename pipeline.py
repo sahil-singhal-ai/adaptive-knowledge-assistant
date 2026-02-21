@@ -27,7 +27,6 @@ def run_knowledge_assistant(file_url: str, question: str):
     embedded_text_vector = embed_text(text_chunks)
     store_embeddings(embedded_text_vector, local_file_path)
 
-    
     distance, indices = retrieve(question, local_file_path, 10)
     retrieved_chunks = [text_chunks[i] for i in indices[0]]
 
@@ -36,7 +35,7 @@ def run_knowledge_assistant(file_url: str, question: str):
     # Add user message to chat memory
     chat_memory.add_user(question)
 
-    answer,trimmed_chunks = generate_answer(model,tokenizer,retrieved_chunks, indices, question, chat_memory.get_messages(),300)
+    answer,trimmed_chunks = generate_answer(model,tokenizer,retrieved_chunks, indices, question, chat_memory.get_messages(),300) #explicitely passing question as would be trimming conversation for token management
 
     # Add assistant response to memory
     chat_memory.add_assistant(answer)
