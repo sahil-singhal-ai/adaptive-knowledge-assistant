@@ -9,7 +9,9 @@ from retrieval.retriever import retrieve
 from models.llm_loader import get_llm_model
 from answer_generator.answer_generator import generate_answer
 from answer_generator.evaluation_answer import evaluation_answer
+from memory.chat_memory import ChatMemory
 
+chat_memory=ChatMemory(max_messages=8)
 
 
 def run_knowledge_assistant(file_url: str, question: str):
@@ -25,12 +27,18 @@ def run_knowledge_assistant(file_url: str, question: str):
     embedded_text_vector = embed_text(text_chunks)
     store_embeddings(embedded_text_vector, local_file_path)
 
+    # Add user message to chat memory
+    chat_memory.add_user(question)
+    
     distance, indices = retrieve(question, local_file_path, 10)
     retrieved_chunks = [text_chunks[i] for i in indices[0]]
 
     model, tokenizer = get_llm_model()
 
-    answer,trimmed_chunks = generate_answer(model,tokenizer,retrieved_chunks, indices, question, 300)
+    answer,trimmed_chunks = generate_answer(model,tokenizer,retrieved_chunks, indices, question, chat_memory.get_messages,300)
+
+    # Add assistant response to memory
+    chat_memory.add_assistant(answer)
 
     evaluation_response = evaluation_answer(model,tokenizer,question,answer,trimmed_chunks,500)
 
@@ -38,4 +46,5 @@ def run_knowledge_assistant(file_url: str, question: str):
         "answer": answer,
         "evaluation": evaluation_response,
         "retrieved_chunks": retrieved_chunks
+        "conversation": chat_memory.get_messages()
     }
