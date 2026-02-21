@@ -8,24 +8,28 @@ def store_embeddings(embeddings, original_file_path):
     vector_dir=Path("vectors")
 
     index_path=vector_dir/f"{original_name}.index"
-    vector_dir.mkdir(exist_ok=True, parents=True)
+    if index_path.exists():
+      print(f"vector already exists in {index_path}")
+
+    else:
+      vector_dir.mkdir(exist_ok=True, parents=True)
 
 
-    # Convert embeddings to float32 (FAISS requirement)
-    embeddings=np.array(embeddings).astype('float32')
+      # Convert embeddings to float32 (FAISS requirement)
+      embeddings=np.array(embeddings).astype('float32')
 
-    # Get embedding dimension
-    dimension = embeddings.shape[1]
+      # Get embedding dimension
+      dimension = embeddings.shape[1]
 
-    # Create fresh index
-    index = faiss.IndexFlatL2(dimension)
+      # Create fresh index
+      index = faiss.IndexFlatL2(dimension)
 
-    # Add embeddings
-    index.add(embeddings)
+      # Add embeddings
+      index.add(embeddings)
 
-    # Save index (overwrite every time)
+      # Save index (overwrite every time)
 
-    faiss.write_index(index, str(index_path))
+      faiss.write_index(index, str(index_path))
 
 
-    print(f"Stored {index.ntotal} vectors in {index_path}")
+      print(f"Stored {index.ntotal} vectors in {index_path}")
