@@ -1,14 +1,23 @@
 
-def evaluation_prompt_builder(question, context, answer):
+def evaluation_prompt_builder(conversation_text, document_context):
   evaluation_prompt = f"""You are an expert evaluator for a retrieval-augmented generation system.
-User Question:
-{question}
+
+Conversation:
+{conversation_text}
+
 
 Retrieved Context:
 {context}
 
-Generated Answer:
-{answer}
+Document Context:
+{document_context}
+
+Evaluate:
+1. Is the last assistant response grounded in context?
+2. Is it consistent with conversation?
+3. Is it logically coherent?
+
+Return scores and justification.
 
 Evaluate the answer on:
 

@@ -3,7 +3,7 @@ import torch
 from retrieval.trim_chunks import trim_chunks_to_fit
 from prompt.build_prompt import build_prompt
 
-def generate_answer(model,tokenizer,retrieved_chunks,indices,question,max_new_tokens):
+def generate_answer(model,tokenizer,retrieved_chunks,indices,question,chat_messages,max_new_tokens):
 
   device = next(model.parameters()).device
 
@@ -11,8 +11,16 @@ def generate_answer(model,tokenizer,retrieved_chunks,indices,question,max_new_to
   max_context = model.config.max_position_embeddings
   max_input_tokens = max_context - max_new_tokens
 
+  #Build role-based conversation string
+  conversation_text = ""
+
+  for message in chat_messages:
+    role = message["role"].capitalize()
+    content = message["content"]
+    conversation_text += f"{role}: {content}\n"
+
   # Tokenize prompt + question to measure their length
-  base_prompt=build_prompt([], question)
+  base_prompt=build_prompt([], conversation_text)
   base_tokens = len(tokenizer(base_prompt)["input_ids"])
 
   #Calculate available token budget
@@ -27,7 +35,7 @@ def generate_answer(model,tokenizer,retrieved_chunks,indices,question,max_new_to
   trimmed_chunks = trim_chunks_to_fit(retrieved_chunks, tokenizer, available_for_context)
 
   #call prompt function to build prompt basis question and context text
-  prompt=build_prompt(trimmed_chunks,question)
+  prompt=build_prompt(trimmed_chunks,conversation_text)
 
   #final token length check 
   final_token_len = len(tokenizer(prompt)["input_ids"])

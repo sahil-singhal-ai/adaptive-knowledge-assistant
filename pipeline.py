@@ -40,7 +40,8 @@ def run_knowledge_assistant(file_url: str, question: str):
     # Add assistant response to memory
     chat_memory.add_assistant(answer)
 
-    evaluation_response = evaluation_answer(model,tokenizer,question,answer,trimmed_chunks,500)
+    #evaluation_response = evaluation_answer(model,tokenizer,question,answer,trimmed_chunks,chat_memory.get_messages,500)
+    evaluation_response = evaluation_answer(model,tokenizer,trimmed_chunks,chat_memory.get_messages,500)
 
     return {
         "answer": answer,

@@ -1,21 +1,27 @@
 
-def build_prompt(context_chunks:list,question):
+def build_prompt(context_chunks:list,conversation_text):
   context_text = "\n\n".join(context_chunks)
 
   final_prompt = f"""
-  You are a helpful assistant.
+Document Context:
+{context_text}
 
-The following text is extracted from a larger document.
+Conversation:
+{conversation_text}
 
-Based ONLY on the provided context, answer the question clearly.
+Instructions:
+- Answer the latest user question using the document context.
+- Maintain conversational continuity.
+- Suggest one intelligent follow-up question and briefly answer it.
 
-If the context does not contain enough information, say so.
-  
+Format:
 
-Context : {context_text}
-
-Question : {question}
-
+Answer:
+...
+Follow-up Question:
+...
+Follow-up Answer:
+...
 """
 
   return final_prompt
