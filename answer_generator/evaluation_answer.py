@@ -1,14 +1,14 @@
 import torch
 from prompt.evaluation_prompt import evaluation_prompt_builder
 
-def evaluation_answer(model,tokenizer,trimmed_chunks,chat_messages,max_new_tokens):
+def evaluation_answer(model,tokenizer,question, answer, trimmed_chunks,recent_chats,max_new_tokens):
   
   conversation_text = ""
-  for msg in chat_messages:
+  for msg in recent_chats:
     role = msg["role"].capitalize()
     conversation_text += f"{role}: {msg['content']}\n"
   
-  prompt=evaluation_prompt_builder(conversation_text, trimmed_chunks)
+  prompt=evaluation_prompt_builder(conversation_text, trimmed_chunks, question, answer)
 
   device = next(model.parameters()).device
 

@@ -1,8 +1,12 @@
 
-def evaluation_prompt_builder(conversation_text, document_context):
+def evaluation_prompt_builder(conversation_text, document_context, question, answer):
   evaluation_prompt = f"""You are an expert evaluator for a retrieval-augmented generation system.
 
-Conversation:
+User question : {question}
+
+Answer:{answer}
+
+Recent Conversation:
 {conversation_text}
 
 

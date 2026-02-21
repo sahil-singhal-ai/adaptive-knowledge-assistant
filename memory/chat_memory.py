@@ -26,6 +26,9 @@
     def get_messages(self):
         return self.messages
 
+    def get_recent_conversation(self,n_turns=2):
+        return self.messages[-(n_turns * 2):]
+
     def _trim(self):
         # Keep system + last N messages
         system_message = self.messages[0]
