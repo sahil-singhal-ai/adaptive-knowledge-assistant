@@ -1,6 +1,7 @@
 import torch
 
 from retrieval.trim_chunks import trim_chunks_to_fit
+from retrieval.trim_conversation import trim_conversation_to_fit
 from prompt.build_prompt import build_prompt
 
 def generate_answer(model,tokenizer,retrieved_chunks,indices,question,chat_messages,max_new_tokens):
