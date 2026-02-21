@@ -1,4 +1,4 @@
- class ChatMemory:
+class ChatMemory:
     def __init__(self, max_messages=8):
         self.messages = []
         self.max_messages = max_messages
@@ -38,3 +38,8 @@
             other_messages = other_messages[-self.max_messages:]
 
         self.messages = [system_message] + other_messages
+
+    def clear(self):
+      #wipes out all memory
+      system_message = self.messages[0]
+      self.messages = [system_message]
