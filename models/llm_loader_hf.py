@@ -14,22 +14,15 @@ def get_llm_model_hf():
     global _model, _tokenizer
 
     if _model is None or _tokenizer is None:
-        print("Loading model...")
+        print("Loading model once...")
 
         _tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
-        # Define BitsAndBytesConfig for 4-bit quantization
-        bnb_config = BitsAndBytesConfig(
-            load_in_4bit=True,
-            bnb_4bit_quant_type="nf4",
-            bnb_4bit_use_double_quant=True,
-            bnb_4bit_compute_dtype=torch.float16,
-        )
-
         _model = AutoModelForCausalLM.from_pretrained(
             MODEL_NAME,
-            device_map="auto",
-            quantization_config=bnb_config, # Pass the quantization config here
+            torch_dtype=torch.float32  # CPU-safe
         )
+
+        _model.eval()
 
     return _model, _tokenizer
