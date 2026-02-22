@@ -9,42 +9,9 @@ app_file: app.py
 pinned: false
 ---
 
-# Adaptive Knowledge Assistant
+🤖 Adaptive Knowledge Assistant
 
-A Retrieval-Augmented Generation (RAG) system combining:
+A production-oriented Retrieval-Augmented Generation (RAG) system built with FastAPI, Gradio, structured logging, evaluation layers, and session-aware memory — deployed via Docker on Hugging Face Spaces.
 
-- FastAPI backend (REST API)
-- Gradio UI (interactive interface)
-- Docker deployment on Hugging Face Spaces
-
----
-
-## 🏗 Architecture
-
-Browser  
-→ Gradio UI  
-→ FastAPI Endpoints  
-→ Pipeline  
-→ Embeddings + Vector Store  
-→ LLM  
-→ Evaluation Layer  
-
----
-
-## 📌 API Endpoints
-
-- `GET /health` → Health check  
-- `POST /ask` → Query the knowledge assistant  
-
----
-
-## 🚀 Deployment
-
-This Space runs using a custom Docker container and exposes port 7860 via Uvicorn.
-
----
-
-## 🔐 Security
-
-- API keys stored using Hugging Face Secrets
-- No credentials hardcoded
+🔗 Live Demo: https://huggingface.co/spaces/sahilsinghal/adaptive-knowledge-assistant?logs=build
+📦 Tech Stack: FastAPI · Gradio · FAISS · Transformers · Docker
