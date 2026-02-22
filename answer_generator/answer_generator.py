@@ -57,6 +57,9 @@ def generate_answer(model,tokenizer,retrieved_chunks,indices,question,chat_messa
   #Trim context chunks
   trimmed_chunks = trim_chunks_to_fit(retrieved_chunks, tokenizer, context_budget)
 
+  context_text = "\n".join(trimmed_chunks)
+  context_tokens = len(tokenizer(context_text)["input_ids"])
+  
   #call prompt function to build prompt basis question and context text
   prompt=build_prompt(trimmed_chunks,conversation_text,question,system_instruction)
 
@@ -65,6 +68,8 @@ def generate_answer(model,tokenizer,retrieved_chunks,indices,question,chat_messa
   
   input_ids = inputs["input_ids"]
   attention_mask = inputs["attention_mask"]
+
+  prompt_token_count = input_ids.shape[1]
 
   with torch.no_grad():
         outputs = model.generate(
@@ -82,4 +87,17 @@ def generate_answer(model,tokenizer,retrieved_chunks,indices,question,chat_messa
   generated_tokens = outputs[0][input_ids.shape[1]:]
   answer = tokenizer.decode(generated_tokens, skip_special_tokens=True)
 
-  return answer.strip(),trimmed_chunks
+  response_token_count = generated_tokens.shape[0]
+
+  # ---------------- METADATA ----------------
+  generation_meta = {
+      "trimmed_chunks": trimmed_chunks,
+      "prompt_tokens": int(prompt_token_count),
+      "context_tokens": int(context_tokens),
+      "conversation_tokens": int(actual_conv_tokens),
+      "response_tokens": int(response_token_count),
+      "max_context_window": int(max_context),
+      "model_name": getattr(model.config, "_name_or_path", "unknown")
+    }
+
+  return answer.strip(),generation_meta

@@ -1,20 +1,40 @@
 
 
 import torch
+import json
 from evaluation.evaluation_prompt import evaluation_prompt_builder
 
 def evaluation_answer(model,tokenizer,question, answer, trimmed_chunks,recent_chats,max_new_tokens):
+  device = next(model.parameters()).device
   
+  max_context = model.config.max_position_embeddings
+  max_input_tokens = max_context - max_new_tokens
+
   conversation_text = ""
   for msg in recent_chats:
     role = msg["role"].capitalize()
     conversation_text += f"{role}: {msg['content']}\n"
   
-  prompt=evaluation_prompt_builder(conversation_text, trimmed_chunks, question, answer)
+  # -------- Clean Document Context --------
+  document_context = "\n".join(trimmed_chunks)
+  
+  prompt=evaluation_prompt_builder(conversation_text, document_context, question, answer)
 
-  device = next(model.parameters()).device
+  
 
-  inputs = tokenizer(prompt, return_tensors="pt").to(device)
+  # -------- Token Budget Check --------
+  inputs = tokenizer(prompt, return_tensors="pt")
+
+  if inputs["input_ids"].shape[1] > max_input_tokens:
+        # Hard truncate safely (simple version)
+        inputs = tokenizer(
+            prompt,
+            return_tensors="pt",
+            truncation=True,
+            max_length=max_input_tokens
+        )
+
+  inputs = inputs.to(device)
   
   input_ids = inputs["input_ids"]
   attention_mask = inputs["attention_mask"]
@@ -24,15 +44,25 @@ def evaluation_answer(model,tokenizer,question, answer, trimmed_chunks,recent_ch
             input_ids=input_ids,
             attention_mask=attention_mask,
             max_new_tokens=max_new_tokens,
-            temperature=0.2,
-            do_sample=True,
+            temperature=0.0,
+            do_sample=False,
             repetition_penalty=1.1,
             pad_token_id=tokenizer.eos_token_id
         )
-  response = tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-  #Only decode newly generated tokens
   generated_tokens = outputs[0][input_ids.shape[1]:]
-  answer = tokenizer.decode(generated_tokens, skip_special_tokens=True)
+  eval_text = tokenizer.decode(generated_tokens, skip_special_tokens=True)
 
-  return answer.strip()
+  # -------- Try JSON Parsing --------
+  try:
+        eval_json = json.loads(eval_text)
+  except Exception:
+        eval_json = {
+            "groundedness": None,
+            "relevance": None,
+            "completeness": None,
+            "hallucination_risk": "Unknown",
+            "overall_score": None,
+            "feedback": eval_text,
+            "parse_error": True
+        }
+  return eval_json

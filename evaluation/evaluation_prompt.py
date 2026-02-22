@@ -2,7 +2,13 @@
 
 
 def evaluation_prompt_builder(conversation_text, document_context, question, answer):
-  evaluation_prompt = f"""You are an expert evaluator for a retrieval-augmented generation system.
+  evaluation_prompt = f"""
+  
+You are an expert evaluator for a retrieval-augmented generation system.
+
+Return ONLY valid JSON.
+Do not include any explanation outside the JSON.
+Do not add markdown.
 
 User question : {question}
 
@@ -29,7 +35,7 @@ Evaluate the answer on:
 3. Completeness (1-5)
 4. Hallucination Risk (Low/Medium/High)
 
-Provide a short explanation and return JSON:
+
 {{
   "groundedness": int,
   "relevance": int,
