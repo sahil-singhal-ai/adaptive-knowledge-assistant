@@ -7,9 +7,9 @@ bitsandbytes
 uvicorn
 gradio
 pydantic
-numpy>=2.0
-faiss-cpu>=1.8.0
-filelock>=3.12.0
-huggingface_hub>=0.20.0
-transformers>=4.38.0
-sentence-transformers>=2.6.0
+numpy
+faiss-cpu
+filelock
+huggingface_hub
+transformers
+sentence-transformers
