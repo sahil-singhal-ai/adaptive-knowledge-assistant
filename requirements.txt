@@ -3,10 +3,11 @@ fastapi
 streamlit
 requests
 pypdf
-faiss-cpu
 transformers
 accelerate
 bitsandbytes
 uvicorn
 gradio
 pydantic
+numpy==1.26.4
+faiss-cpu==1.7.4
