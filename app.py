@@ -51,21 +51,14 @@ def gradio_handler(file_url, question, chat_history, logs_state, session_id):
         logs = result.get("logs", {})
         retrieved_chunks = result.get("retrieved_chunks", [])
 
-        # ✅ Append properly formatted messages (NEW FORMAT)
-        chat_history.append({"role": "user", "content": question})
-        chat_history.append({"role": "assistant", "content": answer})
+        # OLD FORMAT (compatible with older Gradio)
+        chat_history.append((question, answer))
+        
 
         # Accumulate logs
         logs_state.append(logs)
 
-        # Format evaluation nicely
-        if isinstance(evaluation, dict):
-            evaluation_str = "\n".join(
-                f"{k}: {v}" for k, v in evaluation.items()
-            )
-        else:
-            evaluation_str = str(evaluation)
-
+        evaluation_str = str(evaluation)
         logs_str = "\n\n".join(str(l) for l in logs_state)
         chunks_str = "\n\n".join(retrieved_chunks)
 
@@ -94,10 +87,10 @@ with gr.Blocks(title="Adaptive Knowledge Assistant") as demo:
     gr.Markdown("# 🤖 Adaptive Knowledge Assistant")
     gr.Markdown("Multi-turn Document Q&A with Evaluation and Structured Logs")
 
-    url_input = gr.Textbox(label="Public File URL")
+    url_input = gr.Textbox(label="Enter a public File URL")
 
     # ✅ IMPORTANT: Explicit message format
-    chatbot = gr.Chatbot(label="Conversation", type="messages")
+    chatbot = gr.Chatbot(label="Conversation")
 
     question_input = gr.Textbox(label="Ask a Question")
 
@@ -137,7 +130,6 @@ with gr.Blocks(title="Adaptive Knowledge Assistant") as demo:
             logs_state,
         ],
     )
-
 
 # Mount Gradio inside FastAPI
 app = gr.mount_gradio_app(app, demo, path="/")
