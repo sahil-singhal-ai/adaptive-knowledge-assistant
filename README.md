@@ -17,7 +17,6 @@ pinned: false
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green)](https://fastapi.tiangolo.com/)
 [![Python](https://img.shields.io/badge/Python-3.10-blue)](https://python.org)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue)](https://docker.com)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
 
