@@ -2,8 +2,8 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig # Re-import BitsAndBytesConfig
 
-MODEL_NAME = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
-#MODEL_NAME = "Qwen/Qwen2.5-1.5B-Instruct"
+#MODEL_NAME = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+MODEL_NAME = "Qwen/Qwen2.5-1.5B-Instruct"
 
 _tokenizer = None
 _model = None
