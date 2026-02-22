@@ -17,7 +17,7 @@ def generate_answer(model,tokenizer,retrieved_chunks,indices,question,chat_messa
         ""
     )
 
-  print (system_instruction)
+  #print (system_instruction)
 
   system_tokens = len(tokenizer(system_instruction)["input_ids"])
   question_tokens = len(tokenizer(question)["input_ids"])

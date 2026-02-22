@@ -41,7 +41,7 @@ def run_knowledge_assistant(file_url: str, question: str,conversation_id: str = 
     model, tokenizer = get_llm_model()
     
     # Add user message to chat memory
-    #chat_memory.add_user(question) - no need to add question as question being passed explicitely
+    #chat_memory.add_user(question) #no need to add question as question being passed explicitely
 
     answer,generation_meta = generate_answer(model,tokenizer,retrieved_chunks, indices, question, chat_memory.get_messages()[-2:],300) #explicitely passing question as would be trimming conversation for token management
 
@@ -64,12 +64,11 @@ def run_knowledge_assistant(file_url: str, question: str,conversation_id: str = 
         "conversation_id": conversation_id,
         "question": question,
         "retrieved_chunk_count": len(retrieved_chunks),
+        "answer":answer,
         "prompt_tokens": generation_meta.get("prompt_tokens"),
         "context_tokens": generation_meta.get("context_tokens"),
         "response_tokens": generation_meta.get("response_tokens"),
-        "latency_ms": latency,
         "evaluation": evaluation_response,
-        "failure_type": failure_type
     }
 
     logger.log(log_object)

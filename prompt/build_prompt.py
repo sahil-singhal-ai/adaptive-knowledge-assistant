@@ -8,7 +8,7 @@ def build_prompt(context_chunks:list,conversation_text,question,system_instructi
 
 Current user question : {question}
 
-Relevant Document Context which you should definitely for answering user question:
+Relevant Document Context which you should definitely for answering user question. Do not generalize beyond it:
 {context_text}
 
 Previous Conversation summary (if relevant):
