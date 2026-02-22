@@ -14,9 +14,17 @@ from evaluation.logger import RequestLogger
 from memory.chat_memory import ChatMemory
 
 chat_memory=ChatMemory(max_messages=8)
+
+conversation_store={}
 logger=RequestLogger("logs.jsonl")
 
 def run_knowledge_assistant(file_url: str, question: str,conversation_id: str = "local_session"):
+    if conversation_id not in conversation_store:
+      conversation_store[conversation_id] = ChatMemory(max_messages=8)
+
+    chat_memory = conversation_store[conversation_id]
+    
+    
     start_time=time.time()
     failure_type = None
 
@@ -79,5 +87,5 @@ def run_knowledge_assistant(file_url: str, question: str,conversation_id: str = 
         "evaluation": evaluation_response,
         "retrieved_chunks": retrieved_chunks,
         "conversation": chat_memory.get_messages(),
-        "log_object": log_object
+        "logs": log_object
     }

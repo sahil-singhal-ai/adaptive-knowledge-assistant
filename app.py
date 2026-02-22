@@ -1,5 +1,5 @@
 
-
+import uuid
 from fastapi import FastAPI
 from pydantic import BaseModel
 import gradio as gr
@@ -17,6 +17,7 @@ app = FastAPI(title="Adaptive Knowledge Assistant")
 class AskRequest(BaseModel):
     file_url: str
     question: str
+    conversation_id: str = "api_session"
 
 
 @app.get("/health")
@@ -28,51 +29,113 @@ def health():
 def ask_question(request: AskRequest):
     return run_knowledge_assistant(
         file_url=request.file_url,
-        question=request.question
+        question=request.question,
+        conversation_id=request.conversation_id
     )
 
 
 # ----------------------------
-# Gradio UI (URL Only)
+# Gradio UI (Multi-Turn + Logs + Evaluation)
 # ----------------------------
 
-def gradio_handler(file_url, question):
+def gradio_handler(file_url, question, chat_history, logs_state, session_id):
     try:
         result = run_knowledge_assistant(
             file_url=file_url,
-            question=question
+            question=question,
+            conversation_id=session_id
         )
 
         answer = result.get("answer", "")
-        chunks = "\n\n".join(result.get("retrieved_chunks", []))
-        evaluation = str(result.get("evaluation", ""))
+        evaluation = result.get("evaluation", {})
+        logs = result.get("logs", {})
+        retrieved_chunks = result.get("retrieved_chunks", [])
 
-        return answer, chunks, evaluation
+        # Update chat history
+        chat_history.append((question, answer))
+
+        # Accumulate logs
+        logs_state.append(logs)
+
+        # Format evaluation nicely
+        if isinstance(evaluation, dict):
+            evaluation_str = "\n".join(
+                f"{k}: {v}" for k, v in evaluation.items()
+            )
+        else:
+            evaluation_str = str(evaluation)
+
+        logs_str = "\n\n".join(str(l) for l in logs_state)
+        chunks_str = "\n\n".join(retrieved_chunks)
+
+        return (
+            chat_history,
+            evaluation_str,
+            logs_str,
+            chunks_str,
+            chat_history,
+            logs_state,
+        )
 
     except Exception as e:
-        return f"Error: {str(e)}", "", ""
+        return (
+            chat_history,
+            "",
+            f"Error: {str(e)}",
+            "",
+            chat_history,
+            logs_state,
+        )
 
 
 with gr.Blocks(title="Adaptive Knowledge Assistant") as demo:
 
     gr.Markdown("# 🤖 Adaptive Knowledge Assistant")
-    gr.Markdown("Provide a public document URL and ask a question.")
+    gr.Markdown("Multi-turn Document Q&A with Evaluation and Structured Logs")
 
     url_input = gr.Textbox(label="Public File URL")
-    question_input = gr.Textbox(label="Question")
 
-    submit_btn = gr.Button("Run")
+    chatbot = gr.Chatbot(label="Conversation")
 
-    answer_output = gr.Textbox(label="Answer")
-    chunks_output = gr.Textbox(label="Retrieved Chunks")
-    eval_output = gr.Textbox(label="Evaluation")
+    question_input = gr.Textbox(label="Ask a Question")
+
+    submit_btn = gr.Button("Ask")
+
+    # 🔥 Session ID (one per user session)
+    session_state = gr.State(str(uuid.uuid4()))
+
+    # 🔥 Chat + Logs state storage
+    chat_state = gr.State([])
+    logs_state = gr.State([])
+
+    with gr.Accordion("📊 Evaluation", open=False):
+        eval_output = gr.Textbox(label="Evaluation", lines=10)
+
+    with gr.Accordion("🧠 Retrieved Chunks", open=False):
+        chunks_output = gr.Textbox(label="Retrieved Chunks", lines=10)
+
+    with gr.Accordion("📁 Logs", open=False):
+        logs_output = gr.Textbox(label="Logs", lines=12)
 
     submit_btn.click(
         gradio_handler,
-        inputs=[url_input, question_input],
-        outputs=[answer_output, chunks_output, eval_output],
+        inputs=[
+            url_input,
+            question_input,
+            chat_state,
+            logs_state,
+            session_state,
+        ],
+        outputs=[
+            chatbot,
+            eval_output,
+            logs_output,
+            chunks_output,
+            chat_state,
+            logs_state,
+        ],
     )
 
 
-# Mount Gradio inside FastAPI at root path
+# Mount Gradio inside FastAPI
 app = gr.mount_gradio_app(app, demo, path="/")
