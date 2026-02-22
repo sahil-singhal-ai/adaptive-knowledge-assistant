@@ -1,5 +1,7 @@
+
+
 import torch
-from prompt.evaluation_prompt import evaluation_prompt_builder
+from evaluation.evaluation_prompt import evaluation_prompt_builder
 
 def evaluation_answer(model,tokenizer,question, answer, trimmed_chunks,recent_chats,max_new_tokens):
   
@@ -34,6 +36,3 @@ def evaluation_answer(model,tokenizer,question, answer, trimmed_chunks,recent_ch
   answer = tokenizer.decode(generated_tokens, skip_special_tokens=True)
 
   return answer.strip()
-
-
-

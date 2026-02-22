@@ -8,7 +8,7 @@ from retrieval.vectorstore import store_embeddings
 from retrieval.retriever import retrieve
 from models.llm_loader import get_llm_model
 from answer_generator.answer_generator import generate_answer
-from answer_generator.evaluation_answer import evaluation_answer
+from evaluation.evaluation_answer import evaluation_answer
 from memory.chat_memory import ChatMemory
 
 chat_memory=ChatMemory(max_messages=8)
