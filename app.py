@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import gradio as gr
 
-from pipeline import run_knowledge_assistant
+from pipeline_hf import run_knowledge_assistant_hf
 
 
 # ----------------------------
@@ -27,7 +27,7 @@ def health():
 
 @app.post("/ask")
 def ask_question(request: AskRequest):
-    return run_knowledge_assistant(
+    return run_knowledge_assistant_hf(
         file_url=request.file_url,
         question=request.question,
         conversation_id=request.conversation_id
