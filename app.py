@@ -51,8 +51,9 @@ def gradio_handler(file_url, question, chat_history, logs_state, session_id):
         logs = result.get("logs", {})
         retrieved_chunks = result.get("retrieved_chunks", [])
 
-        # Update chat history
-        chat_history.append((question, answer))
+        # ✅ Append properly formatted messages (NEW FORMAT)
+        chat_history.append({"role": "user", "content": question})
+        chat_history.append({"role": "assistant", "content": answer})
 
         # Accumulate logs
         logs_state.append(logs)
@@ -95,16 +96,17 @@ with gr.Blocks(title="Adaptive Knowledge Assistant") as demo:
 
     url_input = gr.Textbox(label="Public File URL")
 
-    chatbot = gr.Chatbot(label="Conversation")
+    # ✅ IMPORTANT: Explicit message format
+    chatbot = gr.Chatbot(label="Conversation", type="messages")
 
     question_input = gr.Textbox(label="Ask a Question")
 
     submit_btn = gr.Button("Ask")
 
-    # 🔥 Session ID (one per user session)
+    # Session ID (one per user session)
     session_state = gr.State(str(uuid.uuid4()))
 
-    # 🔥 Chat + Logs state storage
+    # Chat + Logs state storage
     chat_state = gr.State([])
     logs_state = gr.State([])
 
