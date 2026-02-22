@@ -12,10 +12,6 @@ COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Pre-download models at build time (internet is available during build, not runtime)
-
-RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')"
-
 COPY . .
 
 EXPOSE 7860
