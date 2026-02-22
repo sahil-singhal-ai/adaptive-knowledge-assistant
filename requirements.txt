@@ -1,9 +1,7 @@
-sentence-transformers
 fastapi
 streamlit
 requests
 pypdf
-transformers
 accelerate
 bitsandbytes
 uvicorn
@@ -11,3 +9,7 @@ gradio
 pydantic
 numpy==1.26.4
 faiss-cpu==1.7.4
+filelock>=3.12.0
+huggingface_hub>=0.20.0
+transformers>=4.38.0
+sentence-transformers>=2.6.0

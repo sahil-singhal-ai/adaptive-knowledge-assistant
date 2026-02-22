@@ -1,5 +1,5 @@
 
-FROM pytorch/pytorch:2.1.0-cuda11.8-cudnn8-runtime
+FROM python:3.10
 
 WORKDIR /app
 
@@ -13,8 +13,8 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Pre-download models at build time (internet is available during build, not runtime)
-RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
-RUN python -c "from transformers import AutoTokenizer, AutoModelForCausalLM; AutoTokenizer.from_pretrained('Qwen/Qwen2.5-1.5B-Instruct')"
+
+RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')"
 
 COPY . .
 
