@@ -52,6 +52,7 @@ def run_knowledge_assistant(file_url: str, question: str,conversation_id: str = 
     recent_history = chat_memory.get_recent_conversation(n_turns=1)
 
     #evaluation_response = evaluation_answer(model,tokenizer,question,answer,trimmed_chunks,chat_memory.get_messages,500)
+    trimmed_chunks=generation_meta['trimmed_chunks']
     evaluation_response = evaluation_answer(model,tokenizer,question, answer, trimmed_chunks,recent_history,500)
 
 
@@ -82,5 +83,6 @@ def run_knowledge_assistant(file_url: str, question: str,conversation_id: str = 
         "answer": answer,
         "evaluation": evaluation_response,
         "retrieved_chunks": retrieved_chunks,
-        "conversation": chat_memory.get_messages()
+        "conversation": chat_memory.get_messages(),
+        "log_object": log_object
     }
