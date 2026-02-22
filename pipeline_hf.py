@@ -8,7 +8,7 @@ from ingestion.cleaner import clean_document_text
 from models.embedder import embed_text
 from retrieval.vectorstore import store_embeddings
 from retrieval.retriever import retrieve
-from models.llm_loader_hf import get_llm_model
+from models.llm_loader_hf import get_llm_model_hf
 from answer_generator.answer_generator import generate_answer
 from evaluation.evaluation_answer import evaluation_answer
 from evaluation.logger import RequestLogger
