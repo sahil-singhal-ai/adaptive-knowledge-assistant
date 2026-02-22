@@ -40,7 +40,7 @@ def ask_question(request: AskRequest):
 
 def gradio_handler(file_url, question, chat_history, logs_state, session_id):
     try:
-        result = run_knowledge_assistant(
+        result = run_knowledge_assistant_hf(
             file_url=file_url,
             question=question,
             conversation_id=session_id
