@@ -6,12 +6,12 @@ def build_prompt(context_chunks:list,conversation_text,question,system_instructi
 
 {system_instruction}
 
-User question : {question}
+Current user question : {question}
 
-Document Context:
+Relevant Document Context which you should definitely for answering user question:
 {context_text}
 
-Conversation:
+Previous Conversation summary (if relevant):
 {conversation_text}
 
 Instructions:

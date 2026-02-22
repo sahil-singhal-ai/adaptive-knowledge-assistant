@@ -41,15 +41,15 @@ def run_knowledge_assistant(file_url: str, question: str,conversation_id: str = 
     model, tokenizer = get_llm_model()
     
     # Add user message to chat memory
-    chat_memory.add_user(question)
+    #chat_memory.add_user(question) - no need to add question as question being passed explicitely
 
-    answer,generation_meta = generate_answer(model,tokenizer,retrieved_chunks, indices, question, chat_memory.get_messages(),300) #explicitely passing question as would be trimming conversation for token management
+    answer,generation_meta = generate_answer(model,tokenizer,retrieved_chunks, indices, question, chat_memory.get_messages()[-2:],300) #explicitely passing question as would be trimming conversation for token management
 
     # Add assistant response to memory
     chat_memory.add_assistant(answer)
 
     #evaluatipon
-    recent_history = chat_memory.get_recent_conversation(n_turns=1)
+    recent_history = chat_memory.get_recent_conversation(n_turns=2)
 
     #evaluation_response = evaluation_answer(model,tokenizer,question,answer,trimmed_chunks,chat_memory.get_messages,500)
     trimmed_chunks=generation_meta['trimmed_chunks']

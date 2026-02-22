@@ -6,7 +6,7 @@ class ChatMemory:
         # Default system instruction
         self.messages.append({
             "role": "system",
-            "content": "You are a helpful document-based AI assistant."
+            "content": "You are a helpful adaptive AI assistant."
         })
 
     def add_user(self, content):
