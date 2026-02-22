@@ -43,7 +43,7 @@ def run_knowledge_assistant_hf(file_url: str, question: str,conversation_id: str
     store_embeddings(embedded_text_vector, local_file_path)
 
     #Retrieval
-    distance, indices = retrieve(question, local_file_path, 10)
+    distance, indices = retrieve(question, local_file_path, 5)
     retrieved_chunks = [text_chunks[i] for i in indices[0]]
 
     #model load

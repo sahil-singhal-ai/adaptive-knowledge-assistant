@@ -1,10 +1,12 @@
 
+%%writefile app.py
+
 import uuid
 from fastapi import FastAPI
 from pydantic import BaseModel
 import gradio as gr
 
-from pipeline_hf import run_knowledge_assistant_hf
+from pipeline import run_knowledge_assistant
 
 
 # ----------------------------
@@ -27,7 +29,7 @@ def health():
 
 @app.post("/ask")
 def ask_question(request: AskRequest):
-    return run_knowledge_assistant_hf(
+    return run_knowledge_assistant(
         file_url=request.file_url,
         question=request.question,
         conversation_id=request.conversation_id
@@ -35,12 +37,12 @@ def ask_question(request: AskRequest):
 
 
 # ----------------------------
-# Gradio UI (Multi-Turn + Logs + Evaluation)
+# Gradio UI
 # ----------------------------
 
 def gradio_handler(file_url, question, chat_history, logs_state, session_id):
     try:
-        result = run_knowledge_assistant_hf(
+        result = run_knowledge_assistant(
             file_url=file_url,
             question=question,
             conversation_id=session_id
@@ -51,11 +53,14 @@ def gradio_handler(file_url, question, chat_history, logs_state, session_id):
         logs = result.get("logs", {})
         retrieved_chunks = result.get("retrieved_chunks", [])
 
-        # OLD FORMAT (compatible with older Gradio)
-        chat_history.append((question, answer))
-        
+        # Ensure chat_history is a list
+        if chat_history is None:
+            chat_history = []
 
-        # Accumulate logs
+        # ✅ Modern Gradio expects dict format
+        chat_history.append({"role": "user", "content": question})
+        chat_history.append({"role": "assistant", "content": answer})
+
         logs_state.append(logs)
 
         evaluation_str = str(evaluation)
@@ -85,21 +90,16 @@ def gradio_handler(file_url, question, chat_history, logs_state, session_id):
 with gr.Blocks(title="Adaptive Knowledge Assistant") as demo:
 
     gr.Markdown("# 🤖 Adaptive Knowledge Assistant")
-    gr.Markdown("Multi-turn Document Q&A with Evaluation and Structured Logs")
 
-    url_input = gr.Textbox(label="Enter a public File URL")
+    url_input = gr.Textbox(label="Public File URL")
 
-    # ✅ IMPORTANT: Explicit message format
+    # 🔥 No `type=` argument
     chatbot = gr.Chatbot(label="Conversation")
 
     question_input = gr.Textbox(label="Ask a Question")
-
     submit_btn = gr.Button("Ask")
 
-    # Session ID (one per user session)
     session_state = gr.State(str(uuid.uuid4()))
-
-    # Chat + Logs state storage
     chat_state = gr.State([])
     logs_state = gr.State([])
 
@@ -114,22 +114,9 @@ with gr.Blocks(title="Adaptive Knowledge Assistant") as demo:
 
     submit_btn.click(
         gradio_handler,
-        inputs=[
-            url_input,
-            question_input,
-            chat_state,
-            logs_state,
-            session_state,
-        ],
-        outputs=[
-            chatbot,
-            eval_output,
-            logs_output,
-            chunks_output,
-            chat_state,
-            logs_state,
-        ],
+        inputs=[url_input, question_input, chat_state, logs_state, session_state],
+        outputs=[chatbot, eval_output, logs_output, chunks_output, chat_state, logs_state],
     )
 
-# Mount Gradio inside FastAPI
+
 app = gr.mount_gradio_app(app, demo, path="/")
