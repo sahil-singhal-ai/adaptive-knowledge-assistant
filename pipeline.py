@@ -49,18 +49,14 @@ def run_knowledge_assistant(file_url: str, question: str,conversation_id: str = 
     chat_memory.add_assistant(answer)
 
     #evaluatipon
-    recent_history = chat_memory.get_recent_conversation(n_turns=2)
+    recent_history = chat_memory.get_recent_conversation(n_turns=1)
 
     #evaluation_response = evaluation_answer(model,tokenizer,question,answer,trimmed_chunks,chat_memory.get_messages,500)
     trimmed_chunks=generation_meta['trimmed_chunks']
     evaluation_response = evaluation_answer(model,tokenizer,question, answer, trimmed_chunks,recent_history,500)
 
 
-    # Detect hallucination
-    if evaluation_response.get("faithfulness_score", 1) < 0.5:
-        failure_type = "hallucination"
-
-    latency = int((time.time() - start_time) * 1000)
+    
 
     # ---------------- STRUCTURED LOGGING ----------------
     log_object = {

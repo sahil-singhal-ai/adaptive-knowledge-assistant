@@ -52,17 +52,4 @@ def evaluation_answer(model,tokenizer,question, answer, trimmed_chunks,recent_ch
   generated_tokens = outputs[0][input_ids.shape[1]:]
   eval_text = tokenizer.decode(generated_tokens, skip_special_tokens=True)
 
-  # -------- Try JSON Parsing --------
-  try:
-        eval_json = json.loads(eval_text)
-  except Exception:
-        eval_json = {
-            "groundedness": None,
-            "relevance": None,
-            "completeness": None,
-            "hallucination_risk": "Unknown",
-            "overall_score": None,
-            "feedback": eval_text,
-            "parse_error": True
-        }
-  return eval_json
+  return eval_text

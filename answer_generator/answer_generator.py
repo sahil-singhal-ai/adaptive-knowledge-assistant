@@ -1,6 +1,6 @@
 import torch
 
-from memory.summary_memory import summarize_memory
+from memory.summarize_memory import summarize_memory
 from retrieval.trim_chunks import trim_chunks_to_fit
 from retrieval.trim_conversation import trim_conversation_to_fit
 from prompt.build_prompt import build_prompt
@@ -16,6 +16,8 @@ def generate_answer(model,tokenizer,retrieved_chunks,indices,question,chat_messa
         (msg["content"] for msg in chat_messages if msg["role"] == "system"),
         ""
     )
+
+  print (system_instruction)
 
   system_tokens = len(tokenizer(system_instruction)["input_ids"])
   question_tokens = len(tokenizer(question)["input_ids"])

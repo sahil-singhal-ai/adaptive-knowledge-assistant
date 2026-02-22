@@ -16,17 +16,7 @@ Previous Conversation summary (if relevant):
 
 Instructions:
 - Answer the latest user question using the document context.
-- Maintain conversational continuity.
-- Suggest one intelligent follow-up question and briefly answer it.
 
-Format:
-
-Answer:
-...
-Follow-up Question:
-...
-Follow-up Answer:
-...
 """
 
   return final_prompt
