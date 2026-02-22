@@ -20,4 +20,4 @@ if 'file_content' in locals() and file_content:
         print(f"Chunk {i+1}: {chunk}")
         print("---")
 else:
-    print("No file content to chunk. Please ensure file reading was successful.")
+    print("")
