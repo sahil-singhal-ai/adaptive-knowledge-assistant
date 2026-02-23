@@ -13,7 +13,7 @@ pinned: false
 
 > A production-grade Retrieval-Augmented Generation (RAG) system with multi-turn memory, dynamic context management, automated evaluation, and structured logging — deployed via Docker on Hugging Face Spaces.
 
-[![Live Demo](https://img.shields.io/badge/🚀%20Live%20Demo-Hugging%20Face%20Spaces-orange)](https://huggingface.co/spaces/sahilsinghal/adaptive-knowledge-assistant)
+[![Live Demo - optimized but slow as free tier CPU](https://img.shields.io/badge/🚀%20Live%20Demo-Hugging%20Face%20Spaces-orange)](https://huggingface.co/spaces/sahilsinghal/adaptive-knowledge-assistant)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green)](https://fastapi.tiangolo.com/)
 [![Python](https://img.shields.io/badge/Python-3.10-blue)](https://python.org)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue)](https://docker.com)
