@@ -218,7 +218,26 @@ Each Gradio session or API client gets a UUID-keyed `ChatMemory` object stored i
 - Python 3.10+
 - CUDA GPU recommended (CPU inference is slow for generation)
 
-### Local Setup - Option 1 - using demo notebook
+### Local Setup - Option 1
+```bash
+git clone https://github.com/yourusername/adaptive-knowledge-assistant.git
+cd adaptive-knowledge-assistant
+
+pip install -r requirements.txt
+import pipeline
+import json
+file_url = "https://sherlock-holm.es/stories/plain-text/stud.txt"
+question1 = "What is Holme's detective style. Be very detailed and cover all aspects of his detective style"
+result=pipeline.run_knowledge_assistant(file_url,question1)
+print (result['answer'])
+print ("\n\n")
+question2 = "Who are the other main characters described in the story and what is their character persona"
+result=pipeline.run_knowledge_assistant(file_url,question2)
+print (result['answer'])
+```
+
+
+
 ## 📓 Demo Notebook
 
 A clean, production-style demo notebook is included:
