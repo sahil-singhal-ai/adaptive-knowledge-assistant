@@ -13,12 +13,13 @@ pinned: false
 
 > A production-grade Retrieval-Augmented Generation (RAG) system with multi-turn memory, dynamic context management, automated evaluation, and structured logging — deployed via Docker on Hugging Face Spaces.
 
-[![Live Demo - optimized but slow as free tier CPU](https://img.shields.io/badge/🚀%20Live%20Demo-Hugging%20Face%20Spaces-orange)](https://huggingface.co/spaces/sahilsinghal/adaptive-knowledge-assistant)
+[![Live Demo - slow due to free tier CPU](https://img.shields.io/badge/🚀%20Live%20Demo-Hugging%20Face%20Spaces-orange)](https://huggingface.co/spaces/sahilsinghal/adaptive-knowledge-assistant)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green)](https://fastapi.tiangolo.com/)
 [![Python](https://img.shields.io/badge/Python-3.10-blue)](https://python.org)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue)](https://docker.com)
 
 ---
+
 
 ## 📌 What This Project Demonstrates
 
@@ -217,7 +218,17 @@ Each Gradio session or API client gets a UUID-keyed `ChatMemory` object stored i
 - Python 3.10+
 - CUDA GPU recommended (CPU inference is slow for generation)
 
-### Local Setup
+### Local Setup - Option 1 - using demo notebook
+## 📓 Demo Notebook
+
+A clean, production-style demo notebook is included:
+
+**`Adaptive Knowledge Assistant_demo notebook.ipynb`**
+
+The notebook serves as a **thin client** – all business logic lives in Python modules, demonstrating proper separation of concerns.
+
+
+### Local Setup - Option 2
 
 ```bash
 git clone https://github.com/yourusername/adaptive-knowledge-assistant.git
