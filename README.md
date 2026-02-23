@@ -238,15 +238,6 @@ print (result['answer'])
 
 
 
-## 📓 Demo Notebook
-
-A clean, production-style demo notebook is included:
-
-**`Adaptive Knowledge Assistant_demo notebook.ipynb`**
-
-The notebook serves as a **thin client** – all business logic lives in Python modules, demonstrating proper separation of concerns.
-
-
 ### Local Setup - Option 2
 
 ```bash
