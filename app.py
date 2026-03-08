@@ -89,7 +89,7 @@ with gr.Blocks(title="Adaptive Knowledge Assistant") as demo:
 
     gr.Markdown("# 🤖 Adaptive Knowledge Assistant")
 
-    url_input = gr.Textbox(label="Public File URL")
+    url_input = gr.Textbox(label="Public File URL (.pdf or .txt)")
 
     # 🔥 No `type=` argument
     chatbot = gr.Chatbot(label="Conversation")
